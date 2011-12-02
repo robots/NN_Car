@@ -7,6 +7,8 @@ import sys
 import gzip
 from pprint import pprint
 
+from vision  import *
+
 # nacitame data set do pamate.
 train_data_set = libfann.training_data()
 
@@ -18,19 +20,19 @@ for f in sys.argv[1:]:
 	with gzip.open(f, "r") as input_file:
 		try:
 			while True:
-				velx, vely, out_values, time = pickle.load(input_file)
-				
+				in_values, out_values = pickle.load(input_file)
 
-				train_input.append(list(velx.flatten()) + list(vely.flatten()))
+				#post_in_values = post_process(in_values)
+				post_in_values = in_values
+
+#				pprint(post_in_values)
+				train_input.append(post_in_values)
 				train_output.append(out_values)
 		except EOFError:
 			pass
 
-num_input = len(train_input[0])
-num_hidden1 = 64
-num_output = len(train_output[0])
 
-topology = (num_input, num_hidden1, num_output)
+topology = (len(train_input[0]), 32, len(train_output[0]))
 
 print len(train_input) , len(train_output)
 
@@ -42,9 +44,17 @@ del train_output
 nn = libfann.neural_net()
 pprint(topology)
 nn.create_standard_array(topology)
-nn.set_training_algorithm(libfann.TRAIN_RPROP)
-nn.set_activation_function_output(libfann.SIGMOID_STEPWISE)
+nn.set_learning_rate(0.3)
+#nn.set_training_algorithm(libfann.TRAIN_RPROP)
+#nn.set_training_algorithm(libfann.TRAIN_INCREMENTAL)
+nn.set_training_algorithm(libfann.TRAIN_QUICKPROP)
+#nn.set_training_algorithm(libfann.TRAIN_BATCH)
+#nn.set_activation_function_output(libfann.LINEAR)
+nn.set_activation_function_output(libfann.SIGMOID_SYMMETRIC)
+#nn.set_activation_function_output(libfann.GAUSSIAN_SYMMETRIC)
+#nn.set_activation_function_output(libfann.SIGMOID)
+nn.set_train_stop_function(libfann.STOPFUNC_MSE)
 
-nn.train_on_data(train_data_set, 10000, 50, 0.01)
+nn.train_on_data(train_data_set, 20000, 1000, 0.002)
 
 nn.save("test.net")
