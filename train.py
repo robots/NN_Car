@@ -22,12 +22,14 @@ for f in sys.argv[1:]:
 			while True:
 				in_values, out_values = pickle.load(input_file)
 
-				#post_in_values = post_process(in_values)
-				post_in_values = in_values
-
-#				pprint(post_in_values)
-				train_input.append(post_in_values)
+				train_input.append(in_values)
 				train_output.append(out_values)
+
+				mirror_in_values = mirror_motion_vector(in_values)
+				mirror_out_values = (out_values[0], -out_values[1])
+
+				train_input.append(mirror_in_values)
+				train_output.append(mirror_out_values)
 		except EOFError:
 			pass
 
@@ -50,11 +52,11 @@ nn.set_learning_rate(0.3)
 nn.set_training_algorithm(libfann.TRAIN_QUICKPROP)
 #nn.set_training_algorithm(libfann.TRAIN_BATCH)
 #nn.set_activation_function_output(libfann.LINEAR)
-nn.set_activation_function_output(libfann.SIGMOID_SYMMETRIC)
-#nn.set_activation_function_output(libfann.GAUSSIAN_SYMMETRIC)
+#nn.set_activation_function_output(libfann.SIGMOID_SYMMETRIC)
+nn.set_activation_function_output(libfann.GAUSSIAN_SYMMETRIC)
 #nn.set_activation_function_output(libfann.SIGMOID)
 nn.set_train_stop_function(libfann.STOPFUNC_MSE)
 
-nn.train_on_data(train_data_set, 20000, 1000, 0.002)
+nn.train_on_data(train_data_set, 20000, 1000, 0.007)
 
 nn.save("test.net")

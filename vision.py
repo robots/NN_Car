@@ -7,20 +7,41 @@ import time
 import gzip
 import pickle
 
-def post_process(vectors):
+#def post_process(vectors):
+#	
+#	size = len(vectors) / 2
+#
+#	vec = zip(vectors[:size], vectors[size:])
+#
+#	size_x = Vision.res_work[0]
+#	size_y = Vision.res_work[1]
+#
+#	i = size_x * size_y / 2
+#
+#	x,y = zip(*vec[i:i+size_x])
+#
+#	return x + y
+
+def mirror_motion_vector(vectors):
 	
 	size = len(vectors) / 2
 
-	vec = zip(vectors[:size], vectors[size:])
+	x_values = vectors[:size]
+	y_values = vectors[size:]
+
+	out_x = [0] * size
+	out_y = [0] * size
 
 	size_x = Vision.res_work[0]
 	size_y = Vision.res_work[1]
 
-	i = size_x * size_y / 2
+	for x in range(size_x):
+		for y in range(size_y):
+			out_x[x + y * size_x] = -x_values[size_x - 1 - x + y * size_x]
+			out_y[x + y * size_x] = y_values[size_x - 1 - x + y * size_x]
 
-	x,y = zip(*vec[i:i+size_x])
-
-	return x + y
+	return out_x + out_y
+	
 
 class Vision:
 	# Scale of motion vector array (more means less !)
@@ -57,6 +78,7 @@ class Vision:
 		return frame_gray
 
 	def drawframe(self, frame, velx, vely):
+		#srfc = pygame.image.frombuffer(self.frame_blank.tostring(), cv.GetSize(frame), "P")
 		srfc = pygame.image.frombuffer(frame.tostring(), cv.GetSize(frame), "P")
 		srfc.set_palette(self.palette)
 		self.screen.blit(srfc, (0, 0))
@@ -97,6 +119,7 @@ class Vision:
 		self.velx = cv.CreateImage(self.res_work, cv.IPL_DEPTH_32F, 1)
 		self.vely = cv.CreateImage(self.res_work, cv.IPL_DEPTH_32F, 1)
 
+		self.frame_blank = cv.CreateImage(self.res_input, cv.IPL_DEPTH_8U, 1)
 		self.frame_new = cv.CreateImage(self.res_work, cv.IPL_DEPTH_8U, 1)
 		self.frame_old = cv.CreateImage(self.res_work, cv.IPL_DEPTH_8U, 1)
 
