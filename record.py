@@ -62,7 +62,7 @@ try:
 
 		pickle.dump((in_values, out_values), output_file)
 
-#		print "Speed: {} forward, {} turn".format(out_values[0], out_values[1])
+		print "Speed: {} forward, {} turn".format(out_values[0], out_values[1])
 
 except KeyboardInterrupt:
 	print "Terminated..."

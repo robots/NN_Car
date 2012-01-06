@@ -17,7 +17,7 @@ class SerialCar(object):
 		self._ser.write(struct.pack('Bbbb', 0xff, -right, -left, self._extra))
 	
 	def set_speed(self, speed, turn):
-		turn = turn - 0.18
+		turn = turn - 0.18 * speed
 		speed *= 0.4
 		turn *= 0.7
 
