@@ -50,10 +50,11 @@ class Vision:
 	# Size of detection window
 	window = 7
 
-#	res_input = (640, 480)
-	res_input = (800, 600)
+	res_input = (640, 480)
+#	res_input = (800, 600)
 
-	res_work = (res_input[0] / scale, res_input[1] / scale)
+	res_work = ((res_input[0] - scale) / scale, (res_input[1] - scale) / scale)
+#	res_work = res_input
 
 	def gen_palette_fire(self):
 		gstep, bstep = 75, 150
@@ -86,8 +87,8 @@ class Vision:
 
 		for x in range(self.res_work[0]):
 			for y in range(self.res_work[1]):
-				valx = (cv.Get2D(self.velx, y, x)[0] * self.scale)
-				valy = (cv.Get2D(self.vely, y, x)[0] * self.scale)
+				valx = (cv.Get2D(self.velx, y, x)[0] * 4)
+				valy = (cv.Get2D(self.vely, y, x)[0] * 4)
 
 				basex = x * self.scale + self.scale / 2
 				basey = y * self.scale + self.scale / 2
@@ -121,8 +122,8 @@ class Vision:
 		self.vely = cv.CreateImage(self.res_work, cv.IPL_DEPTH_32F, 1)
 
 		self.frame_blank = cv.CreateImage(self.res_input, cv.IPL_DEPTH_8U, 1)
-		self.frame_new = cv.CreateImage(self.res_work, cv.IPL_DEPTH_8U, 1)
-		self.frame_old = cv.CreateImage(self.res_work, cv.IPL_DEPTH_8U, 1)
+		self.frame_new = cv.CreateImage(self.res_input, cv.IPL_DEPTH_8U, 1)
+		self.frame_old = cv.CreateImage(self.res_input, cv.IPL_DEPTH_8U, 1)
 
 		self._query_frame_new()
 
@@ -137,7 +138,9 @@ class Vision:
 		self.frame_old, self.frame_new = self.frame_new, self.frame_old
 		frame = self._query_frame_new()
 
-		cv.CalcOpticalFlowLK(self.frame_old, self.frame_new, (self.window, self.window), self.velx, self.vely)
+		scale_tuple = (self.scale, self.scale)
+
+		cv.CalcOpticalFlowBM(self.frame_old, self.frame_new, scale_tuple, scale_tuple, (10,10), 0, self.velx, self.vely)
 
 		self.drawframe(frame, self.velx, self.vely)
 

@@ -10,8 +10,8 @@ from pprint import pprint
 
 from vision  import *
 
-ph_corr = 2
-mirror = False
+ph_corr = 4
+mirror = True
 
 # nacitame data set do pamate.
 train_data_set = libfann.training_data()
@@ -68,7 +68,7 @@ del train_output
 nn = libfann.neural_net()
 pprint(topology)
 nn.create_standard_array(topology)
-nn.set_learning_rate(0.3)
+nn.set_learning_rate(0.2)
 #nn.set_training_algorithm(libfann.TRAIN_RPROP)
 #nn.set_training_algorithm(libfann.TRAIN_INCREMENTAL)
 nn.set_training_algorithm(libfann.TRAIN_QUICKPROP)
@@ -79,7 +79,7 @@ nn.set_activation_function_output(libfann.GAUSSIAN_SYMMETRIC)
 #nn.set_activation_function_output(libfann.SIGMOID)
 nn.set_train_stop_function(libfann.STOPFUNC_MSE)
 
-nn.train_on_data(train_data_set, 20000, 1000, 0.007)
+nn.train_on_data(train_data_set, 20000, 1000, 0.003)
 
 filename = "nn_" + time.strftime("%Y%m%d_%H%M%S") + ".net"
 nn.save(filename)
