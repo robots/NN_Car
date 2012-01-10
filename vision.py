@@ -50,7 +50,8 @@ class Vision:
 	# Size of detection window
 	window = 7
 
-	res_input = (640, 480)
+#	res_input = (640, 480)
+	res_input = (800, 600)
 
 	res_work = (res_input[0] / scale, res_input[1] / scale)
 
