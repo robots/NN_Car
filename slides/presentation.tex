@@ -5,6 +5,7 @@
 \usetheme[height=7mm]{Rochester}
 
 \usepackage{graphicx}
+%\usepackage{movie15}
 \usepackage{hyperref}
 \usepackage{skull}
 \usepackage{verbatim}
@@ -12,9 +13,8 @@
 \usepackage[T1]{fontenc}
 \usepackage[czech,english]{babel}
 
-
-\title{Autíčko + webkamera + neuronová síť + = awesomesauce}
-\author{Michal Demín, Kuba Marek}
+\title{Autíčko + webkamera + neuronová síť = awesomesauce}
+\author{Michal Demín \and Kuba Marek}
 \date{}
 
 \begin{document}
@@ -23,17 +23,18 @@
 \titlepage
 \end{frame}
 
-\begin{frame}{Základní myšlenka}
+\begin{frame}{Základní myšlenky}
 \begin{itemize}
-\item Motion vectors -- odhad pohybu v obrazu, používá se v MPEG
-\item Detekce kolizí:
-Když vidím nějaký objekt jako statický, pak jsem na kolizním kurzu.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Přehled}
-\begin{itemize}
-\item
+\item Motion vectors
+	\begin{itemize}
+	\item Pohyb v obrazu, používá se v MPEG
+	\end{itemize}
+\item Detekce kolizí
+	\begin{itemize}
+	\item Když vidím nějaký objekt jako statický, pak jsem na kolizním kurzu (Proportional Navigation)
+	\item Když na levé straně obrazu rychle utíká krajina, tak jsem blízko levé stěny
+	\end{itemize}
+\item Michal má doma kousky robotů
 \end{itemize}
 \end{frame}
 
@@ -41,32 +42,113 @@ Když vidím nějaký objekt jako statický, pak jsem na kolizním kurzu.
 \begin{frame}[plain]
 \begin{centering}
 \includegraphics[width=1.05\paperwidth]{img1.jpg}
-%\includegraphics[height=0.5\textheight]{img2.jpg}
 \end{centering}
 \end{frame}
 
-\begin{frame}{Co funguje}
-\end{frame}
+{
+\setbeamercolor{background canvas}{bg=black,fg=white}
+\usebeamercolor[fg]{background canvas}
 
 \begin{frame}[plain]
-\center
-Video!
+\begin{centering}
+\hspace{1.5cm}
+\includegraphics[height=1.05\paperheight]{img2.jpg}
+\end{centering}
 \end{frame}
 
-\begin{frame}{Preprocessing}
+}
+
+\begin{frame}{Použité technologie}
 \begin{itemize}
-\item
+\item Nepoužili jsme Matlab!
+\item FANN -- Fast Artificial Neural Network Library
+\item OpenCV
+\item 100 řádků C kódu pro $\mu{}C$
+\item Pythonové skripty
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Části programu}
+\begin{itemize}
+\item record.py
+	\begin{itemize}
+	\item Nahrávání učících dat
+	\end{itemize}
+\item train.py
+	\begin{itemize}
+	\item Naučení sítě
+	\end{itemize}
+\item drive.py
+	\begin{itemize}
+	\item Jízda podle naučené sítě
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Nahrávání}
+\begin{itemize}
+\item Obraz z kamery
+\item Převod na ČB
+\item Motion vektory
+	\begin{itemize}
+	\item OpenCV
+	\item Block matching -- podobně jako MPEG
+	\end{itemize}
+\item Uložení spolu s vstupy joysticku
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Učení}
+\begin{itemize}
+\item Vyrovnání zpoždění obrazu
+\item Vytvoření zrcadlových dat
+\item Spojení více nahrávek do jedné
+\item Učení sítě
+	\begin{itemize}
+	\item Learning rate: 0.2
+	\item Algoritmus: quickprop
+	\end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Neuronová síť}
 \begin{itemize}
-\item
+\item Dopředná neuronová síť
+\item Vstupní vrstva: 108 neuronů
+	\begin{itemize}
+	\item 9 x 6 2D motion vektorů
+	\end{itemize}
+\item Skrytá vrstva: 32 neuronů
+\item Výstupní vrstva: 2 neurony
+	\begin{itemize}
+	\item Rychlost
+	\item Zatáčení
+	\end{itemize}
+\item Přenosová funkce: gaussian symmetric
 \end{itemize}
 \end{frame}
 
+{
+\setbeamercolor{background canvas}{bg=black,fg=white}
+\usebeamercolor[fg]{background canvas}
+
+\begin{frame}[plain]
+\begin{centering}
+%\includemovie[poster]{\paperheight}{\paperwidth}{nn-filtered.avi}
+Video!
+\end{centering}
+\end{frame}
+
+}
+
 \begin{frame}{Problémy}
 \begin{itemize}
+\item Žádná testovací množina
+	\begin{itemize}
+	\item Další senzory
+	\item Simulátor
+	\item Ne pomocí standardních nástrojů v NN knihovně
+	\end{itemize}
 \item Webkamera
 	\begin{itemize}
 	\item Pouze MJPEG, nebo raw bitmapy -- Řešení: OpenCV
@@ -82,5 +164,16 @@ Video!
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Konkurence}
+\begin{itemize}
+\item \url{http://www.youtube.com/watch?v=DWNtsS2kZWs}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Konec}
+\begin{itemize}
+\item Konec?
+\end{itemize}
+\end{frame}
 
 \end{document}
